@@ -34,6 +34,31 @@ async function handleAudioUpload() {
 function handleFile(e: any) {
   files.value = e.target.files
 }
+
+async function handleAudioRecording(message) {
+  transcriptedText.value = ""
+  transcriptionError.value = ""
+  isLoading.value = true
+
+  try {
+    const fd = new FormData()
+    fd.append("audio", message.audio, "test.wav")
+    const { transcript, error } = await $fetch<{
+      transcript: string | undefined
+      error: Error | null
+    }>("/api/transcribe", {
+      method: "POST",
+      body: fd,
+    })
+
+    transcriptedText.value = transcript
+    transcriptionError.value = error
+  } catch (error) {
+    console.log(error)
+  }
+
+  isLoading.value = false
+}
 </script>
 
 <template>
@@ -63,35 +88,47 @@ function handleFile(e: any) {
       </div>
     </header>
 
-    <form @submit.prevent="handleAudioUpload" class="grid gap-y-2">
-      <div
-        class="bg-teal-900/30 rounded place-content-center h-12 px-4 grid py-1"
-      >
-        <input
-          multiple
-          type="file"
-          class="border border-dashed border-teal-700 rounded"
-          @change="handleFile($event)"
-        />
-      </div>
-      <button
-        :class="{ 'bg-green-600': files?.length }"
-        type="submit"
-        class="bg-teal-900 font-bold rounded h-11 px-4 py-1"
-      >
-        Submit
-      </button>
-    </form>
-
     <p v-if="transcriptedText" class="text-xl">
       Transcription: {{ transcriptedText }}
     </p>
+
     <p v-if="transcriptionError" class="text-xl">
       Error: {{ transcriptionError }}
     </p>
-    <p v-if="isLoading" class="fixed z-50 top-0 left-0 bg-red-900">
-      <LoadingIndicator />
-    </p>
+
+    <LoadingIndicator v-if="isLoading" class />
+
+    <div class="grid bg-purple-400/10 rounded px-4 py-4">
+      <p class="mb-[0.5em]">
+        Use the audio recorded to upload your own message.
+      </p>
+
+      <AudioInput @message-sent="handleAudioRecording" />
+    </div>
+
+    <div class="grid bg-purple-400/10 rounded px-4 py-4">
+      <p class="mb-[0.5em]">Upload a pre-recorded file to transcribe.</p>
+
+      <form @submit.prevent="handleAudioUpload" class="grid gap-y-2">
+        <div
+          class="bg-teal-900/30 rounded place-content-center h-12 px-4 grid py-1"
+        >
+          <input
+            multiple
+            type="file"
+            class="border border-dashed border-teal-700 rounded"
+            @change="handleFile($event)"
+          />
+        </div>
+        <button
+          :class="{ 'bg-green-600': files?.length }"
+          type="submit"
+          class="bg-teal-900 font-bold rounded h-11 px-4 py-1"
+        >
+          Submit
+        </button>
+      </form>
+    </div>
   </div>
 </template>
 
