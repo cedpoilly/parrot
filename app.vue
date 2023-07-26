@@ -75,7 +75,7 @@ function handleFile(e: any) {
         />
       </div>
       <button
-        :class="{ 'bg-green-600': files.length }"
+        :class="{ 'bg-green-600': files?.length }"
         type="submit"
         class="bg-teal-900 font-bold rounded h-11 px-4 py-1"
       >
