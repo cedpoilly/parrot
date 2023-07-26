@@ -22,7 +22,7 @@ export default eventHandler(async (event) => {
     // * if the file has no extension, the code will fail.
     // "./American_English_sound__h__(female).wav"
     // "/tmp/704d56f6f17265614c312c600.wav"
-    fileObject.filepath
+    fileObject.filepath,
   )
   console.log("Transcript", transcript)
 
@@ -38,14 +38,14 @@ async function parseMultipartNodeRequest(req: IncomingMessage) {
       multiples: true,
       uploadDir: "./",
       filename: () => {
-        return `${Date.now().toString()}.wav`
+        return `temp_${Date.now().toString()}.wav`
       },
     })
 
     form.parse(req, (error: Error, fields: Fields, files: Files) => {
       if (error) {
         console.log(
-          "ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR "
+          "ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ",
         )
 
         reject(error)
@@ -58,6 +58,6 @@ async function parseMultipartNodeRequest(req: IncomingMessage) {
 }
 
 async function transcribe(path: String) {
-  const response = await whisper.transcribe(path, "whisper-1")
+  const response = await whisper.transcribe(path, "whisper-1", "en")
   return { response, error: null }
 }
