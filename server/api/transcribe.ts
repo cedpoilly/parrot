@@ -1,5 +1,4 @@
-// @ts-ignore-next-line
-import dotenv from "dotenv"
+import * as dotenv from "dotenv"
 // @ts-ignore-next-line
 import formidable, { Fields, Files } from "formidable"
 // @ts-ignore-next-line
@@ -48,7 +47,7 @@ async function parseMultipartNodeRequest(req: IncomingMessage) {
           "ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ",
         )
 
-        reject(error)
+        reject(error.message)
         return
       }
 
