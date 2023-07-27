@@ -59,8 +59,6 @@ async function parseMultipartNodeRequest(req: IncomingMessage) {
 }
 
 async function transcribe(path: PathLike) {
-  console.log("Path:", path)
-
   let response
   let error
 
