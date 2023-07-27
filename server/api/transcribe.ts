@@ -1,14 +1,15 @@
+import { PathLike } from "fs"
+import { IncomingMessage } from "http"
+
 import * as dotenv from "dotenv"
 // @ts-ignore-next-line
 import formidable, { Fields, Files } from "formidable"
-// @ts-ignore-next-line
-import Whisper from "whisper-nodejs"
 
-import { IncomingMessage } from "http"
-
-const whisper = new Whisper(process.env.OPENAI_KEY)
+import Whisper from "../Whisper"
 
 dotenv.config()
+
+const whisper = new Whisper(process.env.OPENAI_KEY as string)
 
 export default eventHandler(async (event) => {
   const req = event.node.req
@@ -56,7 +57,16 @@ async function parseMultipartNodeRequest(req: IncomingMessage) {
   })
 }
 
-async function transcribe(path: String) {
-  const response = await whisper.transcribe(path, "whisper-1", "en")
-  return { response, error: null }
+async function transcribe(path: PathLike) {
+  let response
+  let error
+
+  try {
+    response = await whisper.transcribe(path, "whisper-1")
+  } catch (caughtError) {
+    error = caughtError
+    console.error(caughtError)
+  }
+
+  return { response, error }
 }
