@@ -2,6 +2,7 @@ import { PathLike } from "fs"
 import { IncomingMessage } from "http"
 
 import * as dotenv from "dotenv"
+
 // @ts-ignore-next-line
 import formidable, { Fields, Files } from "formidable"
 
@@ -24,7 +25,7 @@ export default eventHandler(async (event) => {
     // "/tmp/704d56f6f17265614c312c600.wav"
     fileObject.filepath,
   )
-  console.log("Transcript", transcript)
+  console.log("Transcript:", `${transcript}`)
 
   return {
     error,
@@ -58,6 +59,8 @@ async function parseMultipartNodeRequest(req: IncomingMessage) {
 }
 
 async function transcribe(path: PathLike) {
+  console.log("Path:", path)
+
   let response
   let error
 
