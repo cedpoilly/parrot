@@ -127,6 +127,8 @@ function onStopMediaRecorder() {
   })
 
   showControls.value = true
+
+  resetRecording()
 }
 
 async function stopRecordingAndHide() {
