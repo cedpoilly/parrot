@@ -1,4 +1,6 @@
 <script setup lang="ts">
+// fix railway deployment
+
 const files = ref()
 const transcriptedText = ref()
 const transcriptionError = ref()
