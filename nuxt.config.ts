@@ -8,4 +8,8 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
+
+  nitro: {
+    preset: "netlify",
+  },
 })
