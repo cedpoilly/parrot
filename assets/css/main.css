@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html,
+body {
+  @apply min-h-screen;
+}
+
+body {
+  @apply grid;
+}
+
+#__nuxt {
+  @apply my-auto;
+}
