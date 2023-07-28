@@ -35,7 +35,7 @@ function handleFile(e: any) {
   files.value = e.target.files
 }
 
-async function handleAudioRecording(message) {
+async function handleAudioRecording(message: { audio: Blob }) {
   transcriptedText.value = ""
   transcriptionError.value = ""
   isLoading.value = true
@@ -103,7 +103,7 @@ async function handleAudioRecording(message) {
         Use the audio recorded to upload your own message.
       </p>
 
-      <AudioInput @message-sent="handleAudioRecording" />
+      <AudioPushInput @message-sent="handleAudioRecording" />
     </div>
 
     <div class="grid bg-purple-400/10 rounded px-4 py-4">
