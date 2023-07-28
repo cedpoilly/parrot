@@ -1,15 +1,15 @@
 <script setup lang="ts">
 const emit = defineEmits(["message-sent"])
 
-const startDate = ref(null)
+const startDate = ref()
 const isRecording = ref(false)
 const showControls = ref(false)
 const shouldStop = ref(false)
 const stopped = ref(false)
-const recordedChunks = ref([])
-const mediaRecorder = ref(null)
-const stream = ref(null)
-const duration = ref(null)
+const recordedChunks = ref<BlobPart[]>([])
+const mediaRecorder = ref<MediaRecorder | null>()
+const stream = ref<MediaStream>()
+const duration = ref<number>(0)
 
 async function startRecording() {
   const canProceed = await handlePermissionRequestResponse()
@@ -35,7 +35,10 @@ async function startRecording() {
   recordedChunks.value = []
 
   if (!mediaRecorder.value) {
-    mediaRecorder.value = new MediaRecorder(stream.value, options)
+    mediaRecorder.value = new MediaRecorder(
+      stream.value as MediaStream,
+      options,
+    )
   }
 
   mediaRecorder.value.addEventListener("dataavailable", onDataAvailable)
@@ -70,11 +73,11 @@ async function handlePermissionRequestResponse() {
   return permissionGranted
 }
 
-function handleSuccess(_stream) {
+function handleSuccess(_stream: MediaStream) {
   stream.value = _stream
 }
 
-function formatDuration(duration) {
+function formatDuration(duration: number) {
   if (!duration) {
     return `00:00`
   }
@@ -84,7 +87,7 @@ function formatDuration(duration) {
   return `00:${paddedDuration}`
 }
 
-function onDataAvailable(e) {
+function onDataAvailable(e: BlobEvent) {
   const dataAvailable = e.data.size > 0
 
   if (dataAvailable) {
@@ -115,8 +118,8 @@ function onStopMediaRecorder() {
 
   setSources()
 
-  mediaRecorder.value.removeEventListener("dataavailable", onDataAvailable)
-  mediaRecorder.value.removeEventListener("stop", onStopMediaRecorder)
+  mediaRecorder.value?.removeEventListener("dataavailable", onDataAvailable)
+  mediaRecorder.value?.removeEventListener("stop", onStopMediaRecorder)
 
   emit("message-sent", {
     audio: blob,
