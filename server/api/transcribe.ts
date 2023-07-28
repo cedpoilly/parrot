@@ -13,6 +13,8 @@ export default eventHandler(async (event) => {
 
   console.log("Transcript:", `${transcript}`)
 
+  console.log(process.version)
+
   return {
     transcript,
   }
