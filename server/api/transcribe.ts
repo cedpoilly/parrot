@@ -6,14 +6,14 @@ export default eventHandler(async (event) => {
 
   const { response: transcript, error } = await transcribeFile(filePath)
 
-  if (transcript) {
-    console.log("Transcript:", `${transcript}`)
-  } else {
+  if (!transcript) {
     console.error(error)
+    return { error }
   }
 
+  console.log("Transcript:", `${transcript}`)
+
   return {
-    error,
     transcript,
   }
 })
