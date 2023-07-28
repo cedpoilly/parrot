@@ -8,6 +8,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@google-cloud/text-to-speech": "^4.2.3",
     "@heroicons/vue": "^2.0.18",
     "axios": "^1.4.0",
     "dotenv": "^16.3.1",

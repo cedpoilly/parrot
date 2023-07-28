@@ -2,12 +2,17 @@
 const files = ref()
 const transcriptedText = ref()
 const transcriptionError = ref()
-const isLoading = ref(false)
+
+const isLoadingSpeech = ref(false)
+const isLoadingTranscript = ref(false)
+const parrotStatus = ref<"sleeping" | "waking" | "speaking">("sleeping")
+
+const audioParrotFile = ref()
 
 async function handleAudioUpload() {
   transcriptedText.value = ""
   transcriptionError.value = ""
-  isLoading.value = true
+  isLoadingSpeech.value = true
 
   try {
     const fd = new FormData()
@@ -28,7 +33,7 @@ async function handleAudioUpload() {
     console.log(error)
   }
 
-  isLoading.value = false
+  isLoadingSpeech.value = false
 }
 
 function handleFile(e: any) {
@@ -38,14 +43,15 @@ function handleFile(e: any) {
 async function handleAudioRecording(message: { audio: Blob }) {
   transcriptedText.value = ""
   transcriptionError.value = ""
-  isLoading.value = true
+  isLoadingTranscript.value = true
 
   try {
     const fd = new FormData()
     fd.append("audio", message.audio, "test.wav")
+
     const { transcript, error } = await $fetch<{
-      transcript: string | undefined
-      error: Error | null
+      transcript: string
+      error: Error
     }>("/api/transcribe", {
       method: "POST",
       body: fd,
@@ -53,11 +59,48 @@ async function handleAudioRecording(message: { audio: Blob }) {
 
     transcriptedText.value = transcript
     transcriptionError.value = error
+
+    parrotStatus.value = "waking"
+
+    isLoadingTranscript.value = false
+    isLoadingSpeech.value = true
+
+    await requestAndPlayAudio(transcript)
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 
-  isLoading.value = false
+  isLoadingSpeech.value = false
+  isLoadingTranscript.value = false
+}
+
+async function requestAndPlayAudio(text: string) {
+  const response = await $fetch("/api/vocalise", {
+    method: "POST",
+    body: text,
+    responseType: "stream",
+  })
+
+  if (!((response as any) instanceof ReadableStream)) {
+    alert(response as unknown as Error)
+    console.log(response)
+    return
+  }
+
+  audioParrotFile.value = await useGetFileFromStream(
+    response as unknown as ReadableStream,
+  )
+
+  if (!audioParrotFile.value) {
+    alert("Failed to get the audio file!")
+    return
+  }
+
+  parrotStatus.value = "speaking"
+
+  await usePlayTheAudioFile(audioParrotFile.value)
+
+  parrotStatus.value = "sleeping"
 }
 </script>
 
@@ -96,11 +139,23 @@ async function handleAudioRecording(message: { audio: Blob }) {
       Error: {{ transcriptionError }}
     </p>
 
-    <LoadingIndicator v-if="isLoading" class />
+    <LoadingIndicator v-if="isLoadingTranscript" class />
 
     <div class="grid bg-purple-400/10 rounded px-4 py-4">
       <p class="mb-[0.5em]">
         Use the audio recorded to upload your own message.
+      </p>
+
+      <p class="text-3xl py-3 flex justify-end">
+        🦜
+        <span v-if="parrotStatus === 'sleeping'">💤</span>
+
+        <span
+          v-if="parrotStatus === 'waking'"
+          class="loading loading-bars loading-lg"
+        />
+
+        <span v-if="parrotStatus === 'speaking'">📣</span>
       </p>
 
       <AudioPushInput @message-sent="handleAudioRecording" />
