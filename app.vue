@@ -9,6 +9,17 @@ const parrotStatus = ref<"sleeping" | "waking" | "speaking">("sleeping")
 
 const audioParrotFile = ref()
 
+onMounted(async () => {
+  try {
+    await navigator.mediaDevices.getUserMedia({
+      audio: true,
+      video: false,
+    })
+  } catch (error) {
+    alert("Please allow the microphone access for this app to work. 👀 ")
+  }
+})
+
 async function handleAudioUpload() {
   transcriptedText.value = ""
   transcriptionError.value = ""
