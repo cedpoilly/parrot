@@ -17,6 +17,8 @@ export default async function read(input: string) {
 
   // @ts-ignore-next-line
   const [response] = await client.synthesizeSpeech(request)
+  console.log(response)
+
   writeFileSync(outputFile, response.audioContent, "binary")
 
   console.log(`Audio content written to file: ${outputFile}`)
