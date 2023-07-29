@@ -11,10 +11,5 @@
         >@cedpoilly</a
       >
     </p>
-    <div
-      class="absolute w-full background bg-sky-100 text-sky-100 dark:bg-slate-800 dark:text-slate-800"
-    >
-      .
-    </div>
   </div>
 </template>
