@@ -1,9 +1,8 @@
 <script setup lang="ts">
 useHead({
-  title: "ASR (Whisper) to TTS (Narakeet) // Nuxt",
+  title: "Parrot App //ASR & TTS",
 })
 
-const files = ref()
 const transcriptedText = ref()
 const transcriptionError = ref()
 
@@ -23,37 +22,6 @@ onMounted(async () => {
     alert("Please allow the microphone access for this app to work. 👀 ")
   }
 })
-
-async function handleAudioUpload() {
-  transcriptedText.value = ""
-  transcriptionError.value = ""
-  isLoadingSpeech.value = true
-
-  try {
-    const fd = new FormData()
-    Array.from(files.value).map((file) => {
-      fd.append("audio", file as File, "test.wav")
-    })
-    const { transcript, error } = await $fetch<{
-      transcript: string | undefined
-      error: Error | null
-    }>("/api/transcribe", {
-      method: "POST",
-      body: fd,
-    })
-
-    transcriptedText.value = transcript
-    transcriptionError.value = error
-  } catch (error) {
-    console.log(error)
-  }
-
-  isLoadingSpeech.value = false
-}
-
-function handleFile(e: any) {
-  files.value = e.target.files
-}
 
 async function handleAudioRecording(message: { audio: Blob }) {
   transcriptedText.value = ""
@@ -122,27 +90,52 @@ async function requestAndPlayAudio(text: string) {
 <template>
   <div class="grid gap-y-4 px-4 py-8 max-w-xl mx-auto">
     <header class="grid">
-      <h1 class="font-extrabold text-xl mt-[1em]">Whisper Nuxt demo</h1>
+      <h1 class="font-extrabold text-xl md:text-4xl text-center mt-[1em]">
+        The Parrot App
+      </h1>
 
-      <h2 class="font-medium text-lg mt-[1em]">
-        A Nuxt "Fullstack" demo with Whisper from OpenAI
+      <h2 class="font-medium text-lg text-center mt-[1em]">
+        A demo of transcription and text-to-speech.
       </h2>
 
       <div
-        class="bg-slate-700 px-4 py-4 rounded my-4 border border-slate-500 border-dashed"
+        class="bg-slate-700 rounded my-4 border border-slate-500 border-dashed"
       >
-        <p class="">
-          In this demo we use the front-end of a Nuxt 3 app to upload an audio
-          file to a Nuxt API route.
-        </p>
-        <p class="mt-[1em]">
-          The API route processes the file with the `formidable` library to
-          parse the multipart file.
-        </p>
-        <p class="mt-[1em]">
-          The file is then sent to OpenAI's Whisper API, which is an ASR
-          (Automatic Speech Recognition) API.
-        </p>
+        <div class="collapse collapse-arrow">
+          <input type="radio" name="my-accordion-2" checked="checked" />
+          <div class="collapse-title font-bold">For everyone</div>
+          <div class="collapse-content">
+            <p>
+              This app repeats everything you say back to you. It will give you
+              text, then will speak it back to you.
+            </p>
+          </div>
+        </div>
+        <div class="collapse collapse-arrow">
+          <input type="radio" name="my-accordion-2" />
+          <div class="collapse-title font-bold">For nerds</div>
+          <div class="collapse-content">
+            <p class="">
+              In this demo we use the front-end of a Nuxt 3 app to upload an
+              audio file to a Nuxt API route.
+            </p>
+
+            <p class="mt-[1em]">
+              The API route processes the file with the `formidable` library to
+              parse the multipart file.
+            </p>
+
+            <p class="mt-[1em]">
+              The file is then sent to OpenAI's Whisper API, which is an ASR
+              (Automatic Speech Recognition) API.
+            </p>
+
+            <p class="mt-[1em]">
+              Then, we send the transcript to Narakeet and receive a sythesized
+              audio back.
+            </p>
+          </div>
+        </div>
       </div>
     </header>
 
@@ -156,48 +149,25 @@ async function requestAndPlayAudio(text: string) {
 
     <LoadingIndicator v-if="isLoadingTranscript" class />
 
-    <div class="grid bg-purple-400/10 rounded px-4 py-4">
-      <p class="mb-[0.5em]">
-        Use the audio recorded to upload your own message.
-      </p>
-
-      <p class="text-3xl py-3 flex justify-end">
-        🦜
-        <span v-if="parrotStatus === 'sleeping'">💤</span>
+    <div class="grid bg-purple-400/10 rounded gap-y-3 px-4 py-4">
+      <p class="text-3xl flex justify-end">
+        <span class="text-base" style="text-wrap: balance">
+          Press and hold the microphone button to record your message
+        </span>
+        <span class="flex items-center">🦜</span>
+        <span class="flex items-center" v-if="parrotStatus === 'sleeping'">
+          💤
+        </span>
 
         <span
           v-if="parrotStatus === 'waking'"
-          class="loading loading-bars loading-lg"
+          class="flex items-center loading loading-bars loading-lg"
         />
 
         <span v-if="parrotStatus === 'speaking'">📣</span>
       </p>
 
       <AudioPushInput @message-sent="handleAudioRecording" />
-    </div>
-
-    <div class="grid bg-purple-400/10 rounded px-4 py-4">
-      <p class="mb-[0.5em]">Upload a pre-recorded file to transcribe.</p>
-
-      <form @submit.prevent="handleAudioUpload" class="grid gap-y-2">
-        <div
-          class="bg-teal-900/30 rounded place-content-center h-12 px-4 grid py-1"
-        >
-          <input
-            multiple
-            type="file"
-            class="border border-dashed border-teal-700 rounded"
-            @change="handleFile($event)"
-          />
-        </div>
-        <button
-          :class="{ 'bg-green-600': files?.length }"
-          type="submit"
-          class="bg-teal-900 font-bold rounded h-11 px-4 py-1"
-        >
-          Submit
-        </button>
-      </form>
     </div>
 
     <TheMadeWithLoveBanner />
