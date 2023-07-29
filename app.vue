@@ -202,4 +202,8 @@ async function requestAndPlayAudio(text: string) {
 body {
   @apply bg-slate-800 text-slate-50;
 }
+
+#__nuxt {
+  @apply min-h-screen grid items-center;
+}
 </style>
