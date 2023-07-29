@@ -13,7 +13,9 @@ const mediaRecorder = ref<MediaRecorder | null>()
 const stream = ref<MediaStream>()
 const duration = ref<number>(0)
 
-async function startRecording() {
+async function startRecording(event: Event) {
+  event.preventDefault()
+
   const canProceed = await handlePermissionRequestResponse()
   if (!canProceed) {
     alert(
@@ -167,8 +169,8 @@ function setSources() {}
       }"
       title="Press & hold to record. Release to submit."
       ref="startButton"
-      @mousedown="startRecording"
-      @mouseup="stopRecordingAndSubmit"
+      @pointerdown.prevent="startRecording"
+      @pointerup.prevent="stopRecordingAndSubmit"
     >
       <MicrophoneIcon />
     </button>
