@@ -1,27 +1,23 @@
-import { PathLike, writeFileSync } from "fs"
+import { Readable } from "stream"
+// @ts-ignore-next-line
+import got from "got"
 
-import { TextToSpeechClient } from "@google-cloud/text-to-speech"
+import { pipeline } from "node:stream/promises"
+import { createWriteStream } from "fs"
 
-export default async function read(input: string) {
-  const client = new TextToSpeechClient()
-
-  const outputFile = "./output.mp3"
-
-  const request = {
-    input: { text: input },
-    voice: { languageCode: "en-US", ssmlGender: "FEMALE" },
-    audioConfig: { audioEncoding: "MP3" },
-  }
-
-  console.log("Synthesizing...")
-
-  // @ts-ignore-next-line
-  const [response] = await client.synthesizeSpeech(request)
-  console.log(response)
-
-  writeFileSync(outputFile, response.audioContent, "binary")
-
-  console.log(`Audio content written to file: ${outputFile}`)
-
-  return outputFile as PathLike
+export default async function read(input: string, filename: string) {
+  return await pipeline(
+    Readable.from([input]),
+    got.stream.post(
+      `https://api.narakeet.com/text-to-speech/m4a?voice=${process.env.VOICE}`,
+      {
+        headers: {
+          accept: "application/octet-stream",
+          "x-api-key": process.env.NARAKEET_KEY,
+          "content-type": "text/plain",
+        },
+      },
+    ),
+    createWriteStream(filename),
+  )
 }
