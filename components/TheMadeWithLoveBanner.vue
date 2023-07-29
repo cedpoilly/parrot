@@ -8,8 +8,9 @@
         class="link no-underline"
         href="https://github.com/cedpoilly"
         target="_blank"
-        >@cedpoilly</a
       >
+        @cedpoilly
+      </a>
     </p>
   </div>
 </template>
