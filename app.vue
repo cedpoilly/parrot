@@ -1,4 +1,8 @@
 <script setup lang="ts">
+useHead({
+  title: "ASR (Whisper) to TTS (Narakeet) // Nuxt",
+})
+
 const files = ref()
 const transcriptedText = ref()
 const transcriptionError = ref()
@@ -195,6 +199,8 @@ async function requestAndPlayAudio(text: string) {
         </button>
       </form>
     </div>
+
+    <TheMadeWithLoveBanner />
   </div>
 </template>
 
