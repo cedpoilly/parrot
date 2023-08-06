@@ -1,5 +1,7 @@
 # Nuxt Whisper Demo
 
+This is my parrot app that I built for fun. Say something and it will reply back.
+
 ## About this demo
 
 In this demo we use the front-end of a `Nuxt 3` app to upload an audio file to a Nuxt API route.
@@ -7,6 +9,29 @@ In this demo we use the front-end of a `Nuxt 3` app to upload an audio file to a
 The API route processes the file with the `formidable` library to parse the multipart file.
 
 The file is then sent to OpenAI's `Whisper` API, which is an ASR (Automatic Speech Recognition) API.
+
+## Improvements
+
+There are a few improvements I want to bring to the app. Below are a few of them.
+
+### Audio visualisation [status: research]
+
+When the user speaks, we want to visualise the audio. We also want the visualisation for when the parrot speaks back.
+
+Here is an article that I have found: [A Guide To Audio Visualization With JavaScript And GSAP (Part 1)](https://www.smashingmagazine.com/2022/03/audio-visualization-javascript-gsap-part1/)
+
+### General UI updates [status: research]
+
+- [] parrot icon, including the favicon
+- [] move the description out of the way, make it accessible via a button
+- [] make it visually appealing with an animated parrot
+
+### Make it a PWA
+
+- [] Make the app installable
+- [] Make it open offline
+- [] When offline, use the browser's SpeechSynthesis API
+
 
 ## Configuration
 
